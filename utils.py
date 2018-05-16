@@ -17,3 +17,11 @@ class JSONDecimalEncoder(json.JSONEncoder):
             # which wouldn't work (see my comment below), so...
             return (str(o) for o in [o])
         return super().iterencode(o, _one_shot)
+
+
+def check_uuid(uuid: str) -> bool:
+    try:
+        uuidlib.UUID(uuid)
+        return True
+    except ValueError:
+        return False

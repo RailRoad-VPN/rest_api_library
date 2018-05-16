@@ -11,14 +11,14 @@ class ResourceAPI(MethodView):
     def __init__(self):
         pass
 
-    def get(self, **kwargs) -> str:
+    def get(self, **kwargs):
         pass
 
-    def post(self, **kwargs) -> bool:
+    def post(self, **kwargs):
         pass
 
-    def delete(self, **kwargs) -> bool:
+    def delete(self, **kwargs):
         pass
 
-    def put(self, **kwargs) -> Any:
+    def put(self, **kwargs):
         pass
