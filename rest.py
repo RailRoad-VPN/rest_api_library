@@ -6,7 +6,7 @@ from json import JSONDecodeError
 
 import requests
 
-from services.response import APIResponse, APIResponseStatus
+from response import APIResponse, APIResponseStatus
 
 
 class RESTService(object):
