@@ -15,10 +15,10 @@ class RESTService(object):
     _headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
     _url = None
 
-    def __init__(self, api_url: str, headers: dict = None) -> None:
+    def __init__(self, api_url: str, resource_name: str, headers: dict = None) -> None:
         super().__init__()
 
-        self._url = api_url
+        self._url = api_url + resource_name
 
         if headers:
             self._headers = headers
@@ -42,7 +42,7 @@ class RESTService(object):
         except JSONDecodeError:
             pass
 
-        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed),
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.value),
                                    data=req_json.get('data', {}), code=req.status_code, headers=req.headers,
                                    error=req_json.get('error', None), error_code=req_json.get('error_code', None),
                                    developer_message=req_json.get('developer_message', None))
@@ -66,7 +66,7 @@ class RESTService(object):
         except JSONDecodeError:
             pass
 
-        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed),
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.value),
                                    code=req.status_code, headers=req.headers, data=req_json)
         return api_response
 
@@ -89,6 +89,13 @@ class RESTService(object):
         api_response = APIResponse(status=req_json.get('status', None), code=req.status_code, headers=req.headers,
                                    data=req_json)
         return api_response
+
+    def _build_url_pagination(self, limit: int = 0, offset: int = 0):
+        url = self._url
+        if limit != 0:
+            url = self._url + "?limit=%s&offset=%s" % (limit, offset)
+
+        return url
 
     def __repr__(self):
         return self.__dict__
