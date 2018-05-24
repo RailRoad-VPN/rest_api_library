@@ -37,5 +37,8 @@ class ResourcePagination(object):
     def __init__(self, req: LocalProxy):
         if self._limit_field in req.args:
             self.is_paginated = True
-            self.limit = req.args.get(self._limit_field)
-            self.offset = req.args.get(self._offset_field, 0)
+            try:
+                self.limit = int(req.args.get(self._limit_field))
+                self.offset = int(req.args.get(self._offset_field, 0))
+            except ValueError:
+                self.is_paginated = False
