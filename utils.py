@@ -1,7 +1,8 @@
 import decimal
 import uuid
+from typing import Optional
 
-from flask import json
+from flask import json, Response, make_response
 
 
 class JSONDecimalEncoder(json.JSONEncoder):
@@ -25,3 +26,9 @@ def check_uuid(suuid: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def make_api_response(data, http_code: int) -> Response:
+    resp = make_response(data, http_code)
+    resp.mimetype = "application/json"
+    return resp

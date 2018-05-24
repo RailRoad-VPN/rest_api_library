@@ -5,7 +5,7 @@ class APIResponse(object):
     data = {}
     errors = []
 
-    def __init__(self, status: str, code: int, headers=None, errors: list = None, data: dict = None, error: str = None,
+    def __init__(self, status: str, code: int, headers=None, errors: list = None, data=None, error: str = None,
                  error_code: int = None, developer_message: str = None):
         self.status = status
         self.code = code
