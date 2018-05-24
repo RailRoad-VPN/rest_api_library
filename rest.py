@@ -18,7 +18,7 @@ class RESTService(object):
     def __init__(self, api_url: str, resource_name: str, headers: dict = None) -> None:
         super().__init__()
 
-        self._url = api_url + resource_name
+        self._url = "%s/%s" % (api_url, resource_name)
 
         if headers:
             self._headers = headers
