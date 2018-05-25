@@ -32,9 +32,7 @@ class RESTService(object):
         try:
             req = requests.get(url=url, params=params, headers=headers)
         except requests.exceptions.ConnectionError:
-            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE,
-                               code=APIError.UNKNOWN_ERROR_CODE,
-                               message=HTTPStatus.SERVICE_UNAVAILABLE.phrase)
+            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
         req_json = {}
         try:
@@ -56,9 +54,7 @@ class RESTService(object):
         try:
             req = requests.post(url=url, json=data, headers=headers)
         except requests.exceptions.ConnectionError:
-            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE,
-                               code=APIError.UNKNOWN_ERROR_CODE,
-                               message=HTTPStatus.SERVICE_UNAVAILABLE.phrase)
+            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
         req_json = {}
         try:
@@ -79,8 +75,7 @@ class RESTService(object):
         try:
             req = requests.put(url=url, data=json.dumps(data), headers=headers)
         except requests.exceptions.ConnectionError:
-            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE,
-                               code=APIError.UNKNOWN_ERROR_CODE, message=HTTPStatus.SERVICE_UNAVAILABLE.phrase)
+            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
         req_json = {}
         try:
@@ -118,15 +113,13 @@ class APIError(IntEnum):
 class APIException(Exception):
     __version__ = 1
 
-    code = None
     http_code = None
-    message = None
     data = None
+    errors = None
 
-    def __init__(self, message: str, code: int, http_code: int, data: dict = None, *args):
+    def __init__(self, http_code: int, data: dict = None, errors: list = None, *args):
         super().__init__(*args)
 
-        self.code = code
         self.http_code = http_code
-        self.message = message
         self.data = data
+        self.errors = errors
