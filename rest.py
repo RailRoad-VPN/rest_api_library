@@ -74,6 +74,8 @@ class RESTService(object):
         logging.debug("put method")
         if url is None:
             url = self._url
+        if headers is None:
+            headers = self._headers
         try:
             req = requests.put(url=url, data=json.dumps(data), headers=headers)
         except requests.exceptions.ConnectionError:
