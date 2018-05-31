@@ -87,8 +87,9 @@ class RESTService(object):
                                    data=req_json)
         return api_response
 
-    def _build_url_pagination(self, limit: int = 0, offset: int = 0):
-        url = self._url
+    def _build_url_pagination(self, limit: int = 0, offset: int = 0, url: str = None):
+        if url is None:
+            url = self._url
         if limit != 0:
             url = self._url + "?limit=%s&offset=%s" % (limit, offset)
 
