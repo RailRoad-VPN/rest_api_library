@@ -99,6 +99,21 @@ class RESTService(object):
         return self.__dict__
 
 
+class APIResourceURL(object):
+    _base_url = None
+    _resource_name = None
+    rule = None
+    methods = None
+
+    def __init__(self, base_url: str, resource_name: str, methods: list):
+        self._base_url = base_url
+        self._resource_name = resource_name
+
+        self.rule = "%s/%s" % (base_url, resource_name)
+        self.methods = methods
+
+
+
 class APIError(IntEnum):
     def __new__(cls, value, phrase, description=''):
         obj = int.__new__(cls, value)
