@@ -5,6 +5,7 @@ from http import HTTPStatus
 from json import JSONDecodeError
 
 import requests
+import simplejson
 
 from response import APIResponse, APIResponseStatus
 
@@ -29,6 +30,10 @@ class RESTService(object):
         logging.debug("get method")
         if url is None:
             url = self._url
+        if headers is not None:
+            headers = {**self._headers, **headers}
+        else:
+            headers = self._headers
         try:
             req = requests.get(url=url, params=params, headers=headers)
         except requests.exceptions.ConnectionError:
@@ -37,13 +42,14 @@ class RESTService(object):
         req_json = {}
         try:
             req_json = req.json()
-        except JSONDecodeError:
+        except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
         api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.value),
-                                   data=req_json.get('data', {}), code=req.status_code, headers=req.headers,
-                                   error=req_json.get('error', None), error_code=req_json.get('error_code', None),
-                                   developer_message=req_json.get('developer_message', None))
+                                   code=req.status_code,
+                                   headers=req.headers,
+                                   data=req_json.get('data', {}),
+                                   errors=req_json.get('errors', {}))
 
         return api_response
 
@@ -51,6 +57,10 @@ class RESTService(object):
         logging.debug("post method")
         if url is None:
             url = self._url
+        if headers is not None:
+            headers = {**self._headers, **headers}
+        else:
+            headers = self._headers
         try:
             req = requests.post(url=url, json=data, headers=headers)
         except requests.exceptions.ConnectionError:
@@ -59,18 +69,23 @@ class RESTService(object):
         req_json = {}
         try:
             req_json = req.json()
-        except JSONDecodeError:
+        except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
         api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.value),
-                                   code=req.status_code, headers=req.headers, data=req_json)
+                                   code=req.status_code,
+                                   headers=req.headers,
+                                   data=req_json.get('data', {}),
+                                   errors=req_json.get('errors', {}))
         return api_response
 
     def _put(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
         logging.debug("put method")
         if url is None:
             url = self._url
-        if headers is None:
+        if headers is not None:
+            headers = {**self._headers, **headers}
+        else:
             headers = self._headers
         try:
             req = requests.put(url=url, data=json.dumps(data), headers=headers)
@@ -80,11 +95,14 @@ class RESTService(object):
         req_json = {}
         try:
             req_json = req.json()
-        except JSONDecodeError:
+        except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
-        api_response = APIResponse(status=req_json.get('status', None), code=req.status_code, headers=req.headers,
-                                   data=req_json)
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.value),
+                                   code=req.status_code,
+                                   headers=req.headers,
+                                   data=req_json.get('data', {}),
+                                   errors=req_json.get('errors', {}))
         return api_response
 
     def _build_url_pagination(self, limit: int = 0, offset: int = 0, url: str = None):
@@ -111,7 +129,6 @@ class APIResourceURL(object):
 
         self.rule = "%s/%s" % (base_url, resource_name)
         self.methods = methods
-
 
 
 class APIError(IntEnum):

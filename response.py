@@ -16,7 +16,7 @@ class APIResponse(object):
         self.offset = offset
         self.errors = errors
         if headers:
-            self.headers = headers
+            self.headers = dict(headers.items())
         if error is not None or error_code is not None or developer_message is not None:
             self.add_error(code=error_code, message=error, developer_message=developer_message)
 
