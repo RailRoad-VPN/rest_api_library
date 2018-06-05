@@ -126,8 +126,10 @@ class APIResourceURL(object):
     def __init__(self, base_url: str, resource_name: str, methods: list):
         self._base_url = base_url
         self._resource_name = resource_name
-
-        self.rule = "%s/%s" % (base_url, resource_name)
+        if resource_name == '':
+            self.rule = base_url
+        else:
+            self.rule = "%s/%s" % (base_url, resource_name)
         self.methods = methods
 
 
