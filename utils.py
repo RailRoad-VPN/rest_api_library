@@ -37,7 +37,7 @@ def make_api_response(http_code: int, data: APIResponse = None) -> Response:
         resp = make_response(json.dumps(data.serialize()), http_code)
     resp.mimetype = "application/json"
 
-    if data.headers is not None:
+    if data is not None and data.headers is not None:
         headers = data.headers
         for k, v in headers.items():
             resp.headers[k] = v

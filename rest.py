@@ -1,6 +1,5 @@
 import json
 import logging
-from enum import IntEnum
 from http import HTTPStatus
 from json import JSONDecodeError
 
@@ -131,18 +130,6 @@ class APIResourceURL(object):
         else:
             self.rule = "%s/%s" % (base_url, resource_name)
         self.methods = methods
-
-
-class APIError(IntEnum):
-    def __new__(cls, value, phrase, description=''):
-        obj = int.__new__(cls, value)
-        obj._value_ = value
-
-        obj.phrase = phrase
-        obj.description = description
-        return obj
-
-    UNKNOWN_ERROR_CODE = (0, '', '')
 
 
 class APIException(Exception):
