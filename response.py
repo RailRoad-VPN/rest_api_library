@@ -2,6 +2,8 @@ from typing import List
 
 
 class APIError(object):
+    __version__ = 1
+
     code = None
     message = None
     developer_message = None
@@ -21,13 +23,53 @@ class APIError(object):
 
 from enum import Enum
 
+name = 'COMMON-'
+i = 0
+
+
+def count():
+    global i
+    i += 1
+    return i
+
+
+class APIErrorEnum(Enum):
+    __version__ = 1
+
+    def __new__(cls, *args, **kwds):
+        value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
+        obj._value_ = value
+        return obj
+
+    def __init__(self, code, message, developer_message):
+        self.code = code
+        self.message = message
+        self.developer_message = developer_message
+
+    REQUIRED_FIELD_ERROR = (name + str(count()), 'REQUIRED_FIELD_ERROR %s phrase', 'REQUIRED_FIELD_ERROR description')
+
 
 class APIResponseStatus(Enum):
-    success = 'success'
-    failed = 'failed'
+    __version__ = 1
+
+    def __new__(cls, *args, **kwds):
+        value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
+        obj._value_ = value
+        return obj
+
+    def __init__(self, code, status):
+        self.code = code
+        self.status = status
+
+    success = (1, 'success')
+    failed = (0, 'failed')
 
 
 class APIResponse(object):
+    __version__ = 1
+
     is_ok = False
     status = None
     code = None
@@ -51,7 +93,7 @@ class APIResponse(object):
         if error is not None or error_code is not None or developer_message is not None:
             self.add_error(code=error_code, message=error, developer_message=developer_message)
 
-        if status == APIResponseStatus.success.value:
+        if status == APIResponseStatus.success.status:
             self.is_ok = True
         else:
             self.is_ok = False
