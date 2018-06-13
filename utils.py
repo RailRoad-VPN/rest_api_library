@@ -27,14 +27,14 @@ def check_uuid(suuid: str) -> bool:
     try:
         uuid.UUID(suuid)
         return True
-    except ValueError:
+    except (ValueError, TypeError):
         return False
 
 
 def check_required_api_fields(*args):
     errors = []
     for arg in args:
-        if arg is None or arg.strip() == '':
+        if arg is None or (isinstance(args, str) and arg.strip() == ''):
             error = APIError(code='COMMON-000000', message='REQUIRED_FIELD_ERROR %s phrase' % arg,
                              developer_message='REQUIRED_FIELD_ERROR description')
             errors.append(error)
@@ -56,13 +56,13 @@ def make_api_response(http_code: int, data: APIResponse = None) -> Response:
     return resp
 
 
-def make_error_request_response(http_code: HTTPStatus, error: APIErrorEnum = None):
-    if error is None:
+def make_error_request_response(http_code: HTTPStatus, err: APIErrorEnum = None):
+    if err is None:
         response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code)
     else:
-        error = error.message
-        error_code = error.code
-        developer_message = error.developer_message
-        response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+        error_message = err.message
+        error_code = err.code
+        developer_message = err.developer_message
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error_message,
                                     developer_message=developer_message, error_code=error_code)
     return make_api_response(data=response_data, http_code=http_code)

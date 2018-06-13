@@ -60,6 +60,6 @@ def register_api(app, api_base_uri, apis):
 
         urls = cls.get_api_urls(base_url=api_base_uri)
         for url in urls:
-            app.add_url_rule(rule=url.rule, endpoint=cls.__endpoint_name__, view_func=vf)
+            app.add_url_rule(rule=url.rule, endpoint=cls.__endpoint_name__, view_func=vf, methods=url.methods)
 
     pprint(app.url_map._rules_by_endpoint)
