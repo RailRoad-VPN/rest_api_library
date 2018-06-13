@@ -32,11 +32,11 @@ def check_uuid(suuid: str) -> bool:
 
 
 def check_required_api_fields(*args):
-    error = APIErrorEnum.REQUIRED_FIELD_ERROR
     errors = []
     for arg in args:
         if arg is None or arg.strip() == '':
-            error = APIError(code=error.code, message=error.message % arg, developer_message=error.developer_message)
+            error = APIError(code='COMMON-000000', message='REQUIRED_FIELD_ERROR %s phrase' % arg,
+                             developer_message='REQUIRED_FIELD_ERROR description')
             errors.append(error)
     return errors
 

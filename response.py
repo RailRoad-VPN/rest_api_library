@@ -47,8 +47,6 @@ class APIErrorEnum(Enum):
         self.message = message
         self.developer_message = developer_message
 
-    REQUIRED_FIELD_ERROR = (name + str(count()), 'REQUIRED_FIELD_ERROR %s phrase', 'REQUIRED_FIELD_ERROR description')
-
 
 class APIResponseStatus(Enum):
     __version__ = 1
