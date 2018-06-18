@@ -31,13 +31,13 @@ def check_uuid(suuid: str) -> bool:
         return False
 
 
-def check_required_api_fields(*args):
+def check_required_api_fields(fields: dict):
     errors = []
-    for arg in args:
-        if arg is None or (isinstance(args, str) and arg.strip() == ''):
-            error = APIError(code='COMMON-000000', message='REQUIRED_FIELD_ERROR %s phrase' % arg,
-                             developer_message='REQUIRED_FIELD_ERROR description')
-            errors.append(error)
+    for k, v in fields.items():
+        if v is None or (isinstance(v, str) and v.strip() == ''):
+            error = APIError(code='COMMON-000000', message='Field \'%s\' is REQUIRED' % k,
+                             developer_message='Fill this field to perform request')
+            errors.append(error.serialize())
     return errors
 
 

@@ -8,11 +8,16 @@ import simplejson
 
 from response import APIResponse, APIResponseStatus
 
+logger = logging.getLogger(__name__)
+
 
 class RESTService(object):
     __version__ = 1
 
-    _headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
+    _headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'text/plain'
+    }
     _url = None
 
     def __init__(self, api_url: str, resource_name: str, headers: dict = None) -> None:
@@ -23,12 +28,12 @@ class RESTService(object):
         if headers:
             self._headers = headers
 
-        logging.debug("RESTService init. %s" % self.__repr__())
+        logger.debug("RESTService init. %s" % self.__repr__())
 
     def _get(self, url: str = None, params: dict = None, headers: dict = None) -> APIResponse:
-        logging.debug("get method")
         if url is None:
             url = self._url
+        logger.debug("get method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -44,18 +49,16 @@ class RESTService(object):
         except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
-        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status),
-                                   code=req.status_code,
-                                   headers=req.headers,
-                                   data=req_json.get('data', {}),
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status), code=req.status_code,
+                                   headers=req.headers, data=req_json.get('data', {}),
                                    errors=req_json.get('errors', {}))
 
         return api_response
 
     def _post(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
-        logging.debug("post method")
         if url is None:
             url = self._url
+        logger.debug("post method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -79,9 +82,9 @@ class RESTService(object):
         return api_response
 
     def _put(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
-        logging.debug("put method")
         if url is None:
             url = self._url
+        logger.debug("put method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -92,6 +95,7 @@ class RESTService(object):
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
         req_json = {}
+        ''.replace()
         try:
             req_json = req.json()
         except (JSONDecodeError, simplejson.errors.JSONDecodeError):
@@ -145,3 +149,21 @@ class APIException(Exception):
         self.http_code = http_code
         self.data = data
         self.errors = errors
+
+    def serialize(self):
+        r = {
+            'http_code': self.http_code,
+            'data': self.data,
+            'errors': self.errors,
+        }
+
+        if self.errors is not None and self.errors.__len__() > 0:
+            r['errors'] = self.errors
+        return {k: v for k, v in r.items() if v is not None}
+
+
+class APINotFoundException(APIException):
+    __version__ = 1
+
+    def __init__(self, http_code: int, data: dict = None, errors: list = None, *args):
+        super().__init__(http_code=http_code, data=data, errors=errors, *args)
