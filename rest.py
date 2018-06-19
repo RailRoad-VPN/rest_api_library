@@ -95,7 +95,6 @@ class RESTService(object):
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
         req_json = {}
-        ''.replace()
         try:
             req_json = req.json()
         except (JSONDecodeError, simplejson.errors.JSONDecodeError):
