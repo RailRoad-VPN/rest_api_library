@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import List
 
 
@@ -91,7 +92,7 @@ class APIResponse(object):
         if error is not None or error_code is not None or developer_message is not None:
             self.add_error(code=error_code, message=error, developer_message=developer_message)
 
-        if status == APIResponseStatus.success.status:
+        if status == APIResponseStatus.success.status or code == HTTPStatus.NO_CONTENT:
             self.is_ok = True
         else:
             self.is_ok = False
