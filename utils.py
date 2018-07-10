@@ -2,6 +2,7 @@ import decimal
 import uuid
 from http import HTTPStatus
 
+import flask
 import simplejson as json
 from flask import Response, make_response
 
@@ -47,11 +48,6 @@ def make_api_response(http_code: int, data: APIResponse = None) -> Response:
     else:
         resp = make_response(json.dumps(data.serialize()), http_code)
     resp.mimetype = "application/json"
-
-    if data is not None and data.headers is not None:
-        headers = data.headers
-        for k, v in headers.items():
-            resp.headers[k] = v
 
     return resp
 

@@ -108,6 +108,16 @@ class APIResponse(object):
         self.errors.append({k: v for k, v in error.items() if v is not None})
 
     def serialize(self):
+        # clean data from empty objects
+        if self.data:
+            if type(self.data) is list:
+                t_data = []
+                for el in self.data:
+                    t_data.append({k: v for k, v in el.items() if v is not None})
+                self.data = t_data
+            elif type(self.data) is dict:
+                self.data = {k: v for k, v in self.data.items() if v is not None}
+
         r = {
             'status': self.status,
             'data': self.data,

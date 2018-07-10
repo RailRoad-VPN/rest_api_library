@@ -100,7 +100,7 @@ class RESTService(object):
         except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
-        api_response = APIResponse(status=req_json.get('status', None),
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status),
                                    code=req.status_code,
                                    headers=req.headers,
                                    data=req_json.get('data', {}),
