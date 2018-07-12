@@ -1,5 +1,8 @@
+import json
 from http import HTTPStatus
 from typing import List
+
+from flask import make_response, Response
 
 
 class APIError(object):
@@ -128,3 +131,35 @@ class APIResponse(object):
         if self.errors is not None and self.errors.__len__() > 0:
             r['errors'] = self.errors
         return {k: v for k, v in r.items() if v is not None}
+
+
+def make_api_response(http_code: int, data: APIResponse = None) -> Response:
+    if data is None:
+        resp = make_response('', http_code)
+    else:
+        resp = make_response(json.dumps(data.serialize()), http_code)
+    resp.mimetype = "application/json"
+
+    return resp
+
+
+def make_error_request_response(http_code: HTTPStatus, err: APIErrorEnum = None):
+    if err is None:
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code)
+    else:
+        error_message = err.message
+        error_code = err.code
+        developer_message = err.developer_message
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error_message,
+                                    developer_message=developer_message, error_code=error_code)
+    return make_api_response(data=response_data, http_code=http_code)
+
+
+def check_required_api_fields(fields: dict):
+    errors = []
+    for k, v in fields.items():
+        if v is None or (isinstance(v, str) and v.strip() == ''):
+            error = APIError(code='COMMON-000000', message='Field \'%s\' is REQUIRED' % k,
+                             developer_message='Fill this field to perform request')
+            errors.append(error.serialize())
+    return errors
