@@ -1,4 +1,8 @@
+import datetime
+import decimal
 import json
+import uuid
+from enum import Enum
 from http import HTTPStatus
 from typing import List
 
@@ -23,18 +27,6 @@ class APIError(object):
             'message': self.message,
             'developer_message': self.developer_message,
         }
-
-
-from enum import Enum
-
-name = 'COMMON-'
-i = 0
-
-
-def count():
-    global i
-    i += 1
-    return i
 
 
 class APIErrorEnum(Enum):
@@ -133,11 +125,36 @@ class APIResponse(object):
         return {k: v for k, v in r.items() if v is not None}
 
 
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        # See "Date Time String Format" in the ECMA-262 specification.
+        if isinstance(o, datetime.datetime):
+            r = o.isoformat()
+            if o.microsecond:
+                r = r[:23] + r[26:]
+            if r.endswith('+00:00'):
+                r = r[:-6] + 'Z'
+            return r
+        elif isinstance(o, datetime.date):
+            return o.isoformat()
+        elif isinstance(o, datetime.time):
+            if o.utcoffset() is not None:
+                raise ValueError("JSON can't represent timezone-aware times.")
+            r = o.isoformat()
+            if o.microsecond:
+                r = r[:12]
+            return r
+        elif isinstance(o, (decimal.Decimal, uuid.UUID)):
+            return str(o)
+        else:
+            return super(CustomJSONEncoder, self).default(o)
+
+
 def make_api_response(http_code: int, data: APIResponse = None) -> Response:
     if data is None:
         resp = make_response('', http_code)
     else:
-        resp = make_response(json.dumps(data.serialize()), http_code)
+        resp = make_response(json.dumps(data.serialize(), cls=CustomJSONEncoder), http_code)
     resp.mimetype = "application/json"
 
     return resp
