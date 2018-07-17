@@ -6,7 +6,7 @@ from json import JSONDecodeError
 import requests
 import simplejson
 
-from response import APIResponse, APIResponseStatus
+from response import APIResponse, APIResponseStatus, CustomJSONEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.put(url=url, data=json.dumps(data), headers=headers)
+            req = requests.put(url=url, data=json.dumps(data, cls=CustomJSONEncoder), headers=headers)
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
