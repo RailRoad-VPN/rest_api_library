@@ -1,12 +1,15 @@
 import datetime
 import decimal
 import json
+import logging
 import uuid
 from enum import Enum
 from http import HTTPStatus
 from typing import List
 
 from flask import make_response, Response
+
+logger = logging.getLogger(__name__)
 
 
 class APIError(object):
@@ -76,6 +79,9 @@ class APIResponse(object):
     def __init__(self, status: str, code: int, headers=None, errors: List[APIError] = None, data=None,
                  error: str = None, error_code: int = None, developer_message: str = None, limit: int = None,
                  offset: int = None):
+        logger.debug(f"Prepare APIResponse with parameters: status={status}, code={code}, errors={errors}, "
+                     f"data={data}, error={error}, error_code={error_code}, developer_message={developer_message},"
+                     f"limit={limit}, offset={offset}")
         self.status = status
         self.code = code
         self.data = data
@@ -87,7 +93,7 @@ class APIResponse(object):
         if error is not None or error_code is not None or developer_message is not None:
             self.add_error(code=error_code, message=error, developer_message=developer_message)
 
-        if status == APIResponseStatus.success.status or code == HTTPStatus.NO_CONTENT:
+        if status == APIResponseStatus.success.status:
             self.is_ok = True
         else:
             self.is_ok = False
@@ -160,15 +166,18 @@ def make_api_response(http_code: int, data: APIResponse = None) -> Response:
     return resp
 
 
-def make_error_request_response(http_code: HTTPStatus, err: APIErrorEnum = None):
+def make_error_request_response(http_code: HTTPStatus, err=None):
     if err is None:
         response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code)
     else:
-        error_message = err.message
-        error_code = err.code
-        developer_message = err.developer_message
-        response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error_message,
-                                    developer_message=developer_message, error_code=error_code)
+        if isinstance(err, list):
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, errors=err)
+        else:
+            error_message = err.message
+            error_code = err.code
+            developer_message = err.developer_message
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error_message,
+                                        developer_message=developer_message, error_code=error_code)
     return make_api_response(data=response_data, http_code=http_code)
 
 

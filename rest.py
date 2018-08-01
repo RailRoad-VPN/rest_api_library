@@ -53,6 +53,9 @@ class RESTService(object):
                                    headers=req.headers, data=req_json.get('data', {}),
                                    errors=req_json.get('errors', {}))
 
+        if not api_response.is_ok:
+            raise APIException(http_code=api_response.code, errors=api_response.errors)
+
         return api_response
 
     def _post(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
@@ -74,11 +77,13 @@ class RESTService(object):
         except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
-        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status),
-                                   code=req.status_code,
-                                   headers=req.headers,
-                                   data=req_json.get('data', {}),
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status), code=req.status_code,
+                                   headers=req.headers, data=req_json.get('data', {}),
                                    errors=req_json.get('errors', {}))
+
+        if not api_response.is_ok:
+            raise APIException(http_code=api_response.code, errors=api_response.errors)
+
         return api_response
 
     def _put(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
@@ -100,11 +105,13 @@ class RESTService(object):
         except (JSONDecodeError, simplejson.errors.JSONDecodeError):
             pass
 
-        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status),
-                                   code=req.status_code,
-                                   headers=req.headers,
-                                   data=req_json.get('data', {}),
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status), code=req.status_code,
+                                   headers=req.headers, data=req_json.get('data', {}),
                                    errors=req_json.get('errors', {}))
+
+        if not api_response.is_ok:
+            raise APIException(http_code=api_response.code, errors=api_response.errors)
+
         return api_response
 
     def _build_url_pagination(self, limit: int = 0, offset: int = 0, url: str = None):
