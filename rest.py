@@ -54,6 +54,8 @@ class RESTService(object):
                                    errors=req_json.get('errors', {}))
 
         if not api_response.is_ok:
+            if api_response.code == HTTPStatus.NOT_FOUND:
+                raise APINotFoundException(http_code=api_response.code, errors=api_response.errors)
             raise APIException(http_code=api_response.code, errors=api_response.errors)
 
         return api_response
