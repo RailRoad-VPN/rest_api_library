@@ -114,6 +114,34 @@ class RESTService(object):
 
         return api_response
 
+    def _delete(self, url: str = None, headers: dict = None) -> APIResponse:
+        if url is None:
+            url = self._url
+        logger.debug("put method. URL: %s" % url)
+        if headers is not None:
+            headers = {**self._headers, **headers}
+        else:
+            headers = self._headers
+        try:
+            req = requests.delete(url=url, headers=headers)
+        except requests.exceptions.ConnectionError:
+            raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
+
+        req_json = {}
+        try:
+            req_json = req.json()
+        except (JSONDecodeError, simplejson.errors.JSONDecodeError):
+            pass
+
+        api_response = APIResponse(status=req_json.get('status', APIResponseStatus.failed.status), code=req.status_code,
+                                   headers=req.headers, data=req_json.get('data', {}),
+                                   errors=req_json.get('errors', {}))
+
+        if not api_response.is_ok:
+            raise APIException(http_code=api_response.code, errors=api_response.errors)
+
+        return api_response
+
     def _build_url_pagination(self, limit: int = 0, offset: int = 0, url: str = None):
         if url is None:
             url = self._url
