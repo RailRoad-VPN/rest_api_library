@@ -8,6 +8,9 @@ import simplejson
 
 from response import APIResponse, APIResponseStatus, CustomJSONEncoder
 
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 logger = logging.getLogger(__name__)
 
 
