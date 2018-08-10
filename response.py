@@ -156,11 +156,8 @@ class CustomJSONEncoder(json.JSONEncoder):
             return super(CustomJSONEncoder, self).default(o)
 
 
-def make_api_response(http_code: int, data: APIResponse = None) -> Response:
-    if data is None:
-        resp = make_response('', http_code)
-    else:
-        resp = make_response(json.dumps(data.serialize(), cls=CustomJSONEncoder), http_code)
+def make_api_response(http_code: int, data: APIResponse) -> Response:
+    resp = make_response(json.dumps(data.serialize(), cls=CustomJSONEncoder), http_code)
     resp.mimetype = "application/json"
 
     return resp
