@@ -9,11 +9,11 @@ from typing import List
 
 from flask import make_response, Response
 
-logger = logging.getLogger(__name__)
-
 
 class APIError(object):
     __version__ = 1
+
+    logger = logging.getLogger(__name__)
 
     code = None
     message = None
@@ -67,6 +67,8 @@ class APIResponseStatus(Enum):
 class APIResponse(object):
     __version__ = 1
 
+    logger = logging.getLogger(__name__)
+
     is_ok = False
     status = None
     code = None
@@ -79,9 +81,9 @@ class APIResponse(object):
     def __init__(self, status: str, code: int, headers=None, errors: List[APIError] = None, data=None,
                  error: str = None, error_code: int = None, developer_message: str = None, limit: int = None,
                  offset: int = None):
-        logger.debug(f"Prepare APIResponse with parameters: status={status}, code={code}, errors={errors}, "
-                     f"data={data}, error={error}, error_code={error_code}, developer_message={developer_message},"
-                     f"limit={limit}, offset={offset}")
+        self.logger.debug(f"Prepare APIResponse with parameters: status={status}, code={code}, errors={errors}, "
+                          f"data={data}, error={error}, error_code={error_code}, developer_message={developer_message},"
+                          f"limit={limit}, offset={offset}")
         self.status = status
         self.code = code
         self.data = data

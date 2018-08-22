@@ -11,11 +11,11 @@ from response import APIResponse, APIResponseStatus, CustomJSONEncoder
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
-logger = logging.getLogger(__name__)
-
 
 class RESTService(object):
     __version__ = 1
+
+    logger = logging.getLogger(__name__)
 
     _headers = {
         'Content-Type': 'application/json',
@@ -31,12 +31,12 @@ class RESTService(object):
         if headers:
             self._headers = headers
 
-        logger.debug("RESTService init. %s" % self.__repr__())
+        self.logger.debug("RESTService init. %s" % self.__repr__())
 
     def _get(self, url: str = None, params: dict = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        logger.debug("get method. URL: %s" % url)
+        self.logger.debug("get method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -66,7 +66,7 @@ class RESTService(object):
     def _post(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        logger.debug("post method. URL: %s" % url)
+        self.logger.debug("post method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -94,7 +94,7 @@ class RESTService(object):
     def _put(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        logger.debug("put method. URL: %s" % url)
+        self.logger.debug("put method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -122,7 +122,7 @@ class RESTService(object):
     def _delete(self, url: str = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        logger.debug("put method. URL: %s" % url)
+        self.logger.debug("put method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
