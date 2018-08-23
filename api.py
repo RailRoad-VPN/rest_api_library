@@ -1,6 +1,7 @@
 from pprint import pprint
 
 from flask.views import MethodView
+from flask_httpauth import HTTPBasicAuth
 from werkzeug.local import LocalProxy
 
 
@@ -63,3 +64,4 @@ def register_api(app, api_base_uri, apis):
             app.add_url_rule(rule=url.rule, endpoint=cls.__endpoint_name__, view_func=vf, methods=url.methods)
 
     pprint(app.url_map._rules_by_endpoint)
+

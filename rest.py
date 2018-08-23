@@ -23,13 +23,17 @@ class RESTService(object):
     }
     _url = None
 
-    def __init__(self, api_url: str, resource_name: str, headers: dict = None) -> None:
+    __auth = None
+
+    def __init__(self, api_url: str, resource_name: str, headers: dict = None, auth: set = None) -> None:
         super().__init__()
 
         self._url = "%s/%s" % (api_url, resource_name)
 
         if headers:
             self._headers = headers
+
+        self.__auth = auth
 
         self.logger.debug("RESTService init. %s" % self.__repr__())
 
@@ -42,7 +46,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.get(url=url, params=params, headers=headers)
+            req = requests.get(url=url, params=params, headers=headers, auth=self.__auth)
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
@@ -72,7 +76,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.post(url=url, json=data, headers=headers)
+            req = requests.post(url=url, json=data, headers=headers, auth=self.__auth)
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
@@ -100,7 +104,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.put(url=url, data=json.dumps(data, cls=CustomJSONEncoder), headers=headers)
+            req = requests.put(url=url, data=json.dumps(data, cls=CustomJSONEncoder), headers=headers, auth=self.__auth)
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
@@ -128,7 +132,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.delete(url=url, headers=headers)
+            req = requests.delete(url=url, headers=headers, auth=self.__auth)
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
