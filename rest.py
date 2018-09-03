@@ -35,12 +35,12 @@ class RESTService(object):
 
         self.__auth = auth
 
-        self.logger.debug("RESTService init. %s" % self.__repr__())
+        self.logger.debug(f"{self.__class__}: RESTService init. %s" % self.__repr__())
 
     def _get(self, url: str = None, params: dict = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        self.logger.debug("get method. URL: %s" % url)
+        self.logger.debug(f"{self.__class__}: get method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -70,7 +70,7 @@ class RESTService(object):
     def _post(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        self.logger.debug("post method. URL: %s" % url)
+        self.logger.debug(f"{self.__class__}: post method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -98,7 +98,7 @@ class RESTService(object):
     def _put(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        self.logger.debug("put method. URL: %s" % url)
+        self.logger.debug(f"{self.__class__}: put method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:
@@ -126,7 +126,7 @@ class RESTService(object):
     def _delete(self, url: str = None, headers: dict = None) -> APIResponse:
         if url is None:
             url = self._url
-        self.logger.debug("put method. URL: %s" % url)
+        self.logger.debug(f"{self.__class__}: put method. URL: %s" % url)
         if headers is not None:
             headers = {**self._headers, **headers}
         else:

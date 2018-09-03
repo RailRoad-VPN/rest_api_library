@@ -1,7 +1,6 @@
 from pprint import pprint
 
 from flask.views import MethodView
-from flask_httpauth import HTTPBasicAuth
 from werkzeug.local import LocalProxy
 
 
