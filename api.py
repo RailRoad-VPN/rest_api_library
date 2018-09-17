@@ -1,28 +1,49 @@
+from http import HTTPStatus
 from pprint import pprint
 
 from flask.views import MethodView
 from werkzeug.local import LocalProxy
+
+from rest import APIException
+from utils import check_sec_token
 
 
 class ResourceAPI(MethodView):
     __version__ = 1
 
     pagination = None
+    _config = None
 
-    def __init__(self):
-        pass
+    is_protected = False
+    is_auth_passed = True
+
+    def __init__(self, config: dict, is_protected: bool = False):
+        self.is_protected = is_protected
+        self._config = config
 
     def get(self, **kwargs):
-        self.pagination = ResourcePagination(req=kwargs.get('req'))
+        req = kwargs.get('req')
+        self.pagination = ResourcePagination(req=req)
+
+        self._check_token(req=req)
 
     def post(self, **kwargs):
-        pass
+        req = kwargs.get('req')
+        self._check_token(req=req)
 
     def delete(self, **kwargs):
-        pass
+        req = kwargs.get('req')
+        self._check_token(req=req)
 
     def put(self, **kwargs):
-        pass
+        req = kwargs.get('req')
+        self._check_token(req=req)
+
+    def _check_token(self, req: LocalProxy):
+        if self.is_protected:
+            x_auth_token = req.headers.get("X-Auth-Token", None)
+            if not check_sec_token(token=x_auth_token):
+                raise APIException(http_code=HTTPStatus.UNAUTHORIZED)
 
 
 class ResourcePagination(object):
@@ -63,4 +84,3 @@ def register_api(app, api_base_uri, apis):
             app.add_url_rule(rule=url.rule, endpoint=cls.__endpoint_name__, view_func=vf, methods=url.methods)
 
     pprint(app.url_map._rules_by_endpoint)
-
