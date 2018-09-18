@@ -76,7 +76,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.post(url=url, json=data, headers=headers, auth=self.__auth, timeout=timeout)
+            req = requests.post(url=url, json=data, headers=headers, auth=self.__auth, timeout=(timeout, timeout))
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 
