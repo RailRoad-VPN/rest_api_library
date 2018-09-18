@@ -67,7 +67,7 @@ class RESTService(object):
 
         return api_response
 
-    def _post(self, data: dict, url: str = None, headers: dict = None) -> APIResponse:
+    def _post(self, data: dict, url: str = None, headers: dict = None, timeout: int = None) -> APIResponse:
         if url is None:
             url = self._url
         self.logger.debug(f"{self.__class__}: post method. URL: %s" % url)
@@ -76,7 +76,7 @@ class RESTService(object):
         else:
             headers = self._headers
         try:
-            req = requests.post(url=url, json=data, headers=headers, auth=self.__auth)
+            req = requests.post(url=url, json=data, headers=headers, auth=self.__auth, timeout=timeout)
         except requests.exceptions.ConnectionError:
             raise APIException(data={}, http_code=HTTPStatus.SERVICE_UNAVAILABLE)
 

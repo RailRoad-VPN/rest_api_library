@@ -40,7 +40,7 @@ class ResourceAPI(MethodView):
         self._check_token(req=req)
 
     def _check_token(self, req: LocalProxy):
-        if self.is_protected:
+        if self.is_protected and not self._config['DEBUG']:
             x_auth_token = req.headers.get("X-Auth-Token", None)
             if not check_sec_token(token=x_auth_token):
                 raise APIException(http_code=HTTPStatus.UNAUTHORIZED)
