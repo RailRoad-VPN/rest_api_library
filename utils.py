@@ -40,7 +40,7 @@ def gen_sec_token() -> str:
     unixtime = get_unixtime()
     # print("Unix time:" + str(unixtime))
     # print("Unix time len:" + str(len(str(unixtime))))
-    unixtime_divided = "%.5f" % (int(unixtime) / int(r4))
+    unixtime_divided = "%.10f" % (int(unixtime) / int(r4))
     # print("Unix time divided:" + str(unixtime_divided))
     unixtime_divided_len = str(len(str(unixtime_divided)))
     if len(unixtime_divided_len) == 1:
@@ -95,4 +95,4 @@ def check_sec_token(token) -> bool:
     delta_minutes = delta_list[0]
     delta_seconds = delta_list[1]
     print(f"Difference between now date and token date is {delta_minutes} minutes and {delta_seconds} seconds")
-    return delta_seconds < 5
+    return delta_seconds < 11
