@@ -40,14 +40,16 @@ def gen_sec_token() -> str:
     unixtime = get_unixtime()
     # print("Unix time:" + str(unixtime))
     # print("Unix time len:" + str(len(str(unixtime))))
-    unixtime_divided = "%.10f" % (int(unixtime) / int(r4))
+    unixtime_divided = int(unixtime) / int(r4)
     # print("Unix time divided:" + str(unixtime_divided))
-    unixtime_divided_len = str(len(str(unixtime_divided)))
+    unixtime_divided_rounded = "%.10f" % (unixtime_divided)
+    # print("Unix time divided rounded:" + str(unixtime_divided_rounded))
+    unixtime_divided_len = str(len(str(unixtime_divided_rounded)))
     if len(unixtime_divided_len) == 1:
         unixtime_divided_len = "0" + str(unixtime_divided_len)
     # print("Unix time rounded len:" + unixtime_divided_len )
     left_token = token[:int(r4)]
-    center_token = str(unixtime_divided)
+    center_token = str(unixtime_divided_rounded)
     right_token = token[int(r4):]
     token = left_token + center_token + right_token
     if len(r4) == 1:
