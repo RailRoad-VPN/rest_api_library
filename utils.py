@@ -97,4 +97,4 @@ def check_sec_token(token) -> bool:
     delta_minutes = delta_list[0]
     delta_seconds = delta_list[1]
     print(f"Difference between now date and token date is {delta_minutes} minutes and {delta_seconds} seconds")
-    return delta_seconds < 11
+    return delta_minutes <= 0 and delta_seconds <= 11
