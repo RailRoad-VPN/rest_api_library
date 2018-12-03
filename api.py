@@ -43,14 +43,32 @@ class ResourceAPI(MethodView):
         self._check_token(req=req)
 
     def _check_token(self, req: LocalProxy):
+        self.logger.debug(f"Request: {req}")
+        self.logger.debug(f"Headers: {req.headers}")
+        self.logger.debug(f"Args: {req.args}")
+        self.logger.debug(f"Data: {req.data}")
+        self.logger.debug(f"Accept Charsets: {req.accept_charsets}")
+        self.logger.debug(f"Accept Encodings: {req.accept_encodings}")
+        self.logger.debug(f"Accept Mimetypes: {req.accept_mimetypes}")
+        self.logger.debug(f"Charset: {req.charset}")
+        self.logger.debug(f"Cookies: {req.cookies}")
         if self.is_protected:
             x_auth_token = req.headers.get("X-Auth-Token", None)
             # TODO delete it
             if x_auth_token == "7d@qjf-hK:qwQuQqH]Pq+xJNseU<Gh]:A0A=AY\PJKjNnQOP#YA'lXADW[k7FzGE":
-                self.logger.warning(f"security token hardcoded.")
+                self.logger.warning(f"Request used hardcoded security token")
                 return True
             if not check_sec_token(token=x_auth_token):
-                self.logger.error(f"security token not valid. token: {x_auth_token}")
+                self.logger.error(f"Security token not valid. token: {x_auth_token}")
+                self.logger.error(f"Request: {req}")
+                self.logger.error(f"Headers: {req.headers}")
+                self.logger.error(f"Args: {req.args}")
+                self.logger.error(f"Data: {req.data}")
+                self.logger.error(f"Accept Charsets: {req.accept_charsets}")
+                self.logger.error(f"Accept Encodings: {req.accept_encodings}")
+                self.logger.error(f"Accept Mimetypes: {req.accept_mimetypes}")
+                self.logger.error(f"Charset: {req.charset}")
+                self.logger.error(f"Cookies: {req.cookies}")
                 raise APIException(http_code=HTTPStatus.UNAUTHORIZED)
 
 

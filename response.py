@@ -184,6 +184,7 @@ def check_required_api_fields(fields: dict):
     errors = []
     for k, v in fields.items():
         if v is None or (isinstance(v, str) and v.strip() == ''):
+            # TODO correct error
             error = APIError(code='COMMON-000000', message='Field \'%s\' is REQUIRED' % k,
                              developer_message='Fill this field to perform request')
             errors.append(error.serialize())
