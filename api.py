@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 from pprint import pprint
 
@@ -10,6 +11,8 @@ from utils import check_sec_token
 
 class ResourceAPI(MethodView):
     __version__ = 1
+
+    logger = logging.getLogger(__name__)
 
     pagination = None
     _config = None
@@ -44,8 +47,10 @@ class ResourceAPI(MethodView):
             x_auth_token = req.headers.get("X-Auth-Token", None)
             # TODO delete it
             if x_auth_token == "7d@qjf-hK:qwQuQqH]Pq+xJNseU<Gh]:A0A=AY\PJKjNnQOP#YA'lXADW[k7FzGE":
+                self.logger.warning(f"security token hardcoded.")
                 return True
             if not check_sec_token(token=x_auth_token):
+                self.logger.error(f"security token not valid. token: {x_auth_token}")
                 raise APIException(http_code=HTTPStatus.UNAUTHORIZED)
 
 
