@@ -70,6 +70,7 @@ def check_sec_token(token) -> bool:
         r4 = int(r4[1])
     else:
         r4 = int(r4)
+
     if unixtime_len[0] == "0":
         unixtime_len = int(unixtime_len[1])
     else:
@@ -77,14 +78,18 @@ def check_sec_token(token) -> bool:
 
     token = token[4:]
     unixtime = str(token[int(r4):int(unixtime_len) + int(r4)])
-    if unixtime.find(".") != -1:
-        unixtime = float(unixtime)
-    elif unixtime.find(",") != -1:
-        unixtime = unixtime.replace(",", ".")
-        unixtime = float(unixtime)
-    else:
-        unixtime = int(unixtime)
-    unixtime = round(unixtime * int(r4))
+    try:
+        if unixtime.find(".") != -1:
+            unixtime = float(unixtime)
+        elif unixtime.find(",") != -1:
+            unixtime = unixtime.replace(",", ".")
+            unixtime = float(unixtime)
+        else:
+            unixtime = int(unixtime)
+        unixtime = round(unixtime * int(r4))
+    except ValueError:
+        logger.error(f"ValueError to format unixtime={unixtime} as number")
+        return False
 
     d = datetime.utcfromtimestamp(int(unixtime))
     now_d = datetime.utcnow()
@@ -94,6 +99,5 @@ def check_sec_token(token) -> bool:
     delta_minutes = delta_list[0]
     delta_seconds = delta_list[1]
     logger.debug(f"Difference between now date and token date is {delta_minutes} minutes and {delta_seconds} seconds")
-    return delta_minutes < 100
-    # TODO fix it
-    # return delta_minutes <= 0 and delta_seconds <= 11
+    # return delta_minutes < 100
+    return delta_minutes <= 0 and delta_seconds <= 21
