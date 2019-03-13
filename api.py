@@ -5,7 +5,6 @@ from pprint import pprint
 from flask.views import MethodView
 from werkzeug.local import LocalProxy
 
-from rest import APIException
 from utils import check_sec_token
 
 
@@ -97,6 +96,13 @@ class ResourcePagination(object):
             self.limit = limit
             self.offset = offset
 
+    def fill_dict(self, d: dict):
+        if self.limit:
+            d['limit'] = self.limit
+        if self.offset:
+            d['offset'] = self.offset
+        return d
+
 
 def register_api(app, api_base_uri, apis):
     for api in apis:
@@ -110,3 +116,52 @@ def register_api(app, api_base_uri, apis):
             app.add_url_rule(rule=url.rule, endpoint=cls.__endpoint_name__, view_func=vf, methods=url.methods)
 
     pprint(app.url_map._rules_by_endpoint)
+
+
+class APIResourceURL(object):
+    _base_url = None
+    _resource_name = None
+    rule = None
+    methods = None
+
+    def __init__(self, base_url: str, resource_name: str, methods: list):
+        self._base_url = base_url
+        self._resource_name = resource_name
+        if resource_name == '':
+            self.rule = base_url
+        else:
+            self.rule = "%s/%s" % (base_url, resource_name)
+        self.methods = methods
+
+
+class APIException(Exception):
+    __version__ = 1
+
+    http_code = None
+    data = None
+    errors = None
+
+    def __init__(self, http_code: int, data: dict = None, errors: list = None, *args):
+        super().__init__(*args)
+
+        self.http_code = http_code
+        self.data = data
+        self.errors = errors
+
+    def serialize(self):
+        r = {
+            'http_code': self.http_code,
+            'data': self.data,
+            'errors': self.errors,
+        }
+
+        if self.errors is not None and self.errors.__len__() > 0:
+            r['errors'] = self.errors
+        return {k: v for k, v in r.items() if v is not None}
+
+
+class APINotFoundException(APIException):
+    __version__ = 1
+
+    def __init__(self, http_code: int, data: dict = None, errors: list = None, *args):
+        super().__init__(http_code=http_code, data=data, errors=errors, *args)
