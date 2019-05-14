@@ -98,7 +98,7 @@ def check_sec_token(token) -> bool:
         delta_seconds = delta_list[1]
         logger.debug(f"Difference between now date and token date is {delta_minutes} minutes and {delta_seconds} seconds")
         # return delta_minutes < 100
-        return delta_minutes <= 0 and delta_seconds <= 21
+        return delta_minutes <= 1 and delta_seconds <= 41
     except ValueError:
         logger.error(f"ValueError to do security check for token={token}")
         return False
